@@ -38,7 +38,7 @@ public class ObjectManager implements ActionListener  {
 	void addCoins () {
 		int spawnPos = rand.nextInt(3)*150;
 		for (int i = 1; i < ran.nextInt(6)+10; i++) {
-			coins.add(new Coins (spawnPos, -50*i, 30, 30));
+			coins.add(new Coins (spawnPos + 50, -50*i, 30, 30));
 		}
 		
 	}

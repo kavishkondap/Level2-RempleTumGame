@@ -5,7 +5,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -18,9 +20,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	int currentState = MENU;
 	Font font1;
 	Font font2;
+	Font titleFont;
 	Font endFont1;
 	Font scoreFont;
-	Runner runner = new Runner(250, 850, 50, 50);
+	Runner runner = new Runner(25, 850, 50, 50);
 	boolean inAir = false;
 	long counter = 0;
 	final public static int JUMP_TIME = 30;
@@ -29,13 +32,20 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	static Timer longSpawn;
 	static Timer coinSpawn;
 	public static int score;
+	public static BufferedImage image;
+	public static boolean needImage = true;
+	public static boolean gotImage = false;	
 	GamePanel() {
 		this.time = new Timer(1000 / 60, this);
 		time.start();
 		this.font1 = new Font("Monospaced", Font.BOLD, 36);
+		this.titleFont = new Font ("Monospaced", Font.BOLD, 64);
 		this.font2 = new Font("Monospaced", Font.ITALIC, 24);
 		this.score = 0;
 		this.scoreFont = new Font ("Monospaced", Font.PLAIN, 15);
+		if (needImage) {
+		    loadImage ("RempleTumBackground.png");
+		}
 	}
 
 	@Override
@@ -57,6 +67,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		shortSpawn.start();
 		longSpawn.start();
 		coinSpawn.start();
+		GameObject.speedForObstacles = 5;
 	}
 
 	void updateMenuState() {
@@ -82,9 +93,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		// Change to TempleRun Thing
 		g.setColor(Color.CYAN);
 		g.fillRect(0, 0, TempleRun.WIDTH, TempleRun.HEIGHT);
-		g.setFont(font1);
+		
+		g.setFont(titleFont);
 		g.setColor(Color.BLACK);
-		g.drawString("TEMPLE RUN KNOCKOFF", 9, 100);
+		g.drawString("REMPLE TUN", 26, 100);
+		g.setFont(font1);
 		g.drawString("Made by:", 135, 300);
 		g.drawString("Kavish Kondap", 90, 375);
 		g.setFont(font2);
@@ -95,8 +108,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	}
 
 	void drawGameState(Graphics g) {
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, TempleRun.WIDTH, TempleRun.HEIGHT);
+//		g.setColor(Color.BLACK);
+//		g.fillRect(0, 0, TempleRun.WIDTH, TempleRun.HEIGHT);
+		if (gotImage) {
+			g.drawImage(image, 0, 0, TempleRun.WIDTH, TempleRun.HEIGHT, null);
+		} else {
+			g.setColor(Color.BLUE);
+			g.fillRect(0, 0, WIDTH, HEIGHT);
+		}
 		manager.draw(g);
 		g.setFont(scoreFont);
 		g.setColor(Color.WHITE);
@@ -107,15 +126,26 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	void drawEndState(Graphics g) {
 		g.setColor(Color.RED);
 		g.fillRect(0, 0, TempleRun.WIDTH, TempleRun.HEIGHT);
-		g.setFont(font1);
+		g.setFont(titleFont);
 		g.setColor(Color.BLACK);
-		g.drawString("GAME OVER", 125, 100);
-		g.drawString("YOUR SCORE WAS: " + score, 32, 300);
+		g.drawString("GAME OVER", 45, 100);
+		g.setFont(font1);
+		g.drawString("YOUR SCORE WAS: " + score, 25, 300);
 		g.setFont(font2);
 		g.setColor(Color.DARK_GRAY);
 		g.drawString("Press ENTER to play again", 42, 600);
 	}
-
+	void loadImage(String imageFile) {
+	    if (needImage) {
+	        try {
+	            image = ImageIO.read(this.getClass().getResourceAsStream(imageFile));
+		    gotImage = true;
+	        } catch (Exception e) {
+	            
+	        }
+	        needImage = false;
+	    }
+	}
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
@@ -149,7 +179,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			if (currentState!= GAME) {
 			if (currentState == END) {
 				currentState = MENU;
-				runner = new Runner (250, 850, 50, 50);
+				runner = new Runner (200, 850, 50, 50);
 				manager = new ObjectManager (runner);
 				score = 0;
 			} else {
@@ -164,6 +194,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 				coinSpawn.stop();
 			}
 		}
+		
 		if (arg0.getKeyCode() == KeyEvent.VK_UP) {
 			// System.out.println("UP");
 			// runner.up();
@@ -174,16 +205,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		}
 		if (arg0.getKeyCode() == KeyEvent.VK_RIGHT) {
 			// System.out.println("RIGHT");
-			if (runner.x + runner.width < TempleRun.WIDTH && !runner.inAir()) {
-				runner.right();
-			}
+			runner.right = true;
+//			if (runner.x + runner.width + runner.speed <= TempleRun.WIDTH && !runner.inAir()) {
+//				runner.right();
+//			}
 		}
 
 		if (arg0.getKeyCode() == KeyEvent.VK_LEFT&& !runner.inAir()) {
 			// System.out.println("LEFT");
-			if (runner.x > 0) {
-				runner.left();
-			}
+			runner.left = true;
+//			if (runner.x -runner.speed>= 0) {
+//				runner.left();
+//			}
 		}
 		if (arg0.getKeyCode() == KeyEvent.VK_SPACE) {
 			// System.out.println("SPACE");
@@ -209,7 +242,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-
+		if (arg0.getKeyCode()==KeyEvent.VK_RIGHT) {
+			runner.right = false;
+		}
+		if (arg0.getKeyCode()==KeyEvent.VK_LEFT) {
+			runner.left = false;
+		}
 	}
 
 	@Override

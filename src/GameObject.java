@@ -1,24 +1,27 @@
 import java.awt.Rectangle;
 
 public class GameObject {
-	int x;
+	double x;
 	double y;
 	int width;
 	int height;
-	int speed;
+	double speed;
+	static double speedForObstacles = 5;
 	boolean isActive;
 	Rectangle collisionBox;
-	GameObject(int x, double y, int width, int height) {
-		this.x = x;
+	GameObject(double x2, double y, int width, int height) {
+		this.x = x2;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.speed = 50;
+		this.speed = 0.2;
 		this.isActive = true;
-		collisionBox = new Rectangle (this.x, (int) this.y, this.width, this.height);
+		collisionBox = new Rectangle ((int) this.x, (int) this.y, this.width, this.height);
+	
 	}
 
 	void update() {
-		collisionBox.setBounds(x, (int) y, width, height);
+		collisionBox.setBounds((int) x, (int) y, width, height);
+		speedForObstacles+=0.00025;
 	}
 }

@@ -8,13 +8,13 @@ public class LongObstacle extends GameObject{
 		// TODO Auto-generated constructor stub
 	}
 	void update () {
-		speed+=0.0001;
-		y+=speed;
+		//speed+=0.05;
+		y+=speedForObstacles;
 		super.update();
 	}
 	void draw(Graphics g) {
 		g.setColor(Color.YELLOW);
-		g.fillRect(x, (int) y, width, height);
+		g.fillRect((int) x, (int) y, width, height);
 	}
 
 }

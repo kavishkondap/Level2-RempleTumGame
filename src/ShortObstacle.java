@@ -9,14 +9,14 @@ public class ShortObstacle extends GameObject{
 	}
 	
 	void update () {
-		speed+=0.0001;
+		//speed+=0.05;
 		//if (GamePanel.score)
-		y+=speed;
+		y+=speedForObstacles;
 		super.update();
 	}
 	void draw(Graphics g) {
 		g.setColor(Color.YELLOW);
-		g.fillRect(x, (int) y, width, height);
+		g.fillRect((int) x, (int) y, width, height);
 		
 	}
 
