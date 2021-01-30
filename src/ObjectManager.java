@@ -1,3 +1,4 @@
+import java.applet.AudioClip;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,10 +10,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.management.ListenerNotFoundException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JApplet;
 
 public class ObjectManager implements ActionListener {
 	// implements ActionListener
@@ -23,14 +27,36 @@ public class ObjectManager implements ActionListener {
 	Random rand = new Random();
 	Random ran = new Random();
 	int lastSpawn = 1;
-	//URL soundbyte = new File("yourpath/sound.wav").toURI().toURL();
-	//java.applet.AudioClip clip = java.applet.Applet.newAudioClip(soundbyte);
-	
-	
-	
+	String soundName;
+	AudioInputStream audioInputStream;
+	Clip clip;
+
 	ObjectManager(Runner runner) {
 		this.runner = runner;
-		
+		soundName = "src/coinSound.wav";
+		try {
+			audioInputStream = AudioSystem.getAudioInputStream(new File(soundName).getAbsoluteFile());
+			clip = AudioSystem.getClip();
+		} catch (UnsupportedAudioFileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			clip.open(audioInputStream);
+		} catch (LineUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	void addShort() {
@@ -51,7 +77,7 @@ public class ObjectManager implements ActionListener {
 	}
 
 	void addCoins() {
-		Coins.setRandomColor ();
+		Coins.setRandomColor();
 		int spawnPos = rand.nextInt(3) * 150;
 		for (int i = 1; i < ran.nextInt(6) + 10; i++) {
 			coins.add(new Coins(spawnPos + 50, -50 * i, 30, 30));
@@ -135,9 +161,32 @@ public class ObjectManager implements ActionListener {
 		for (int i = 0; i < coins.size(); i++) {
 			if (runner.collisionBox.intersects(coins.get(i).collisionBox)) {
 				coins.get(i).isActive = false;
-				GamePanel.score+= coins.get(i).pointValue;
-				//clip.play();
+				GamePanel.score += coins.get(i).pointValue;
+				playSound ();
+				//clip.stop();
+//				try {
+//					clip.open(audioInputStream);
+//				} catch (LineUnavailableException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+				//clip.start();
+//				clip.close();
+//				clip.loop(-1);
 			}
+		}
+	}
+
+	public static void playSound() {
+		try {
+			AudioClip sound = JApplet.newAudioClip(ObjectManager.class.getResource("coinSound.wav"));
+			sound.play();
+			//Thread.sleep(3400);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 
