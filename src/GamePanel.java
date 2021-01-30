@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -23,7 +24,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	Font titleFont;
 	Font endFont1;
 	Font scoreFont;
-	Runner runner = new Runner(25, 850, 50, 50);
+	Runner runner = new Runner(25, 850, 66, 113);
 	boolean inAir = false;
 	long counter = 0;
 	final public static int JUMP_TIME = 30;
@@ -34,7 +35,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 	public static int score;
 	public static BufferedImage image;
 	public static boolean needImage = true;
-	public static boolean gotImage = false;	
+	public static boolean gotImage = false;
+	public static int highScore;
+	public static int temp;
+	public static int HIGHSCOREHOLDER;
 	GamePanel() {
 		this.time = new Timer(1000 / 60, this);
 		time.start();
@@ -42,9 +46,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		this.titleFont = new Font ("Monospaced", Font.BOLD, 64);
 		this.font2 = new Font("Monospaced", Font.ITALIC, 24);
 		this.score = 0;
+		this.highScore = HighScoreSaver.getScore();
 		this.scoreFont = new Font ("Monospaced", Font.PLAIN, 15);
 		if (needImage) {
-		    loadImage ("RempleTumBackground.png");
+		    loadImage ("RempleTun.jpg");
 		}
 	}
 
@@ -76,6 +81,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 	void updateGameState() {
 		counter++;
+		
 		// System.out.println("CALLING GAME STATE");
 		manager.update();
 		//manager.purgeObjects();
@@ -131,6 +137,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		g.drawString("GAME OVER", 45, 100);
 		g.setFont(font1);
 		g.drawString("YOUR SCORE WAS: " + score, 25, 300);
+		g.drawString("HIGH SCORE = " + highScore, 40, 400);
 		g.setFont(font2);
 		g.setColor(Color.DARK_GRAY);
 		g.drawString("Press ENTER to play again", 42, 600);
@@ -154,7 +161,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			updateMenuState();
 		} else if (currentState == GAME) {
 			updateGameState();
-			
+			if (score>=highScore) {
+				highScore = score;
+				HighScoreSaver.saveScore(highScore);
+				}
 			
 			//System.out.println(counter);
 //			if (counter % JUMP_TIME == 0 && inAir) {
@@ -179,7 +189,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			if (currentState!= GAME) {
 			if (currentState == END) {
 				currentState = MENU;
-				runner = new Runner (200, 850, 50, 50);
+				runner = new Runner (200, 850, 66, 113);
 				manager = new ObjectManager (runner);
 				score = 0;
 			} else {
@@ -188,6 +198,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 			}
 			if (currentState == GAME) {
 				startGame ();
+				GameObject.speedForObstacles = 5;
 			}else if (currentState == END) {
 				shortSpawn.stop();
 				longSpawn.stop();
@@ -205,18 +216,20 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 		}
 		if (arg0.getKeyCode() == KeyEvent.VK_RIGHT) {
 			// System.out.println("RIGHT");
-			runner.right = true;
-//			if (runner.x + runner.width + runner.speed <= TempleRun.WIDTH && !runner.inAir()) {
+			
+			if (runner.x + runner.width  < TempleRun.WIDTH /*&& !runner.inAir()*/) {
 //				runner.right();
-//			}
+				runner.right = true;
+		}
 		}
 
-		if (arg0.getKeyCode() == KeyEvent.VK_LEFT&& !runner.inAir()) {
+		if (arg0.getKeyCode() == KeyEvent.VK_LEFT/*&& !runner.inAir()*/) {
 			// System.out.println("LEFT");
-			runner.left = true;
-//			if (runner.x -runner.speed>= 0) {
+			
+			if (runner.x > 0) {
 //				runner.left();
-//			}
+				runner.left = true;
+			}
 		}
 		if (arg0.getKeyCode() == KeyEvent.VK_SPACE) {
 			// System.out.println("SPACE");

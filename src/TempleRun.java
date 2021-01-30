@@ -1,9 +1,10 @@
 import javax.swing.JFrame;
 
 public class TempleRun {
-	JFrame frame;
+	static JFrame frame;
 	public static final int WIDTH = 450;
 	public static final int HEIGHT = 1000;
+	boolean isClosed;
 GamePanel panel;
 	TempleRun() {
 		this.frame = new JFrame();
@@ -13,6 +14,9 @@ GamePanel panel;
 	public static void main(String[] args) {
 		TempleRun runner = new TempleRun();
 		runner.setup();
+		if (!frame.isActive()) {
+			GamePanel.HIGHSCOREHOLDER=GamePanel.highScore;
+		}
 	}
 
 	public void setup() {

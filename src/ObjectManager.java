@@ -1,31 +1,45 @@
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 //import java.awt.event.ActionEvent;
 //import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ObjectManager implements ActionListener  {
-	//implements ActionListener
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+
+public class ObjectManager implements ActionListener {
+	// implements ActionListener
 	Runner runner;
 	ArrayList<ShortObstacle> shortObstacles = new ArrayList<ShortObstacle>();
 	ArrayList<LongObstacle> longObstacles = new ArrayList<LongObstacle>();
-	ArrayList <Coins> coins = new ArrayList <Coins> ();
+	ArrayList<Coins> coins = new ArrayList<Coins>();
 	Random rand = new Random();
-	Random ran  = new Random ();
+	Random ran = new Random();
 	int lastSpawn = 1;
+	//URL soundbyte = new File("yourpath/sound.wav").toURI().toURL();
+	//java.applet.AudioClip clip = java.applet.Applet.newAudioClip(soundbyte);
+	
+	
+	
 	ObjectManager(Runner runner) {
 		this.runner = runner;
+		
 	}
 
 	void addShort() {
 		if (shortObstacles.size() <= 10) {
 			int temp = rand.nextInt(3);
-			if (lastSpawn!=temp) {
-			
-			shortObstacles.add(new ShortObstacle(lastSpawn * 150, -50, 150, 50));
-			lastSpawn = temp;
+			if (lastSpawn != temp) {
+
+				shortObstacles.add(new ShortObstacle(lastSpawn * 150, -50, 150, 50));
+				lastSpawn = temp;
 			}
 		}
 	}
@@ -35,12 +49,14 @@ public class ObjectManager implements ActionListener  {
 			longObstacles.add(new LongObstacle(rand.nextInt(3) * 150, -400, 150, 400));
 		}
 	}
-	void addCoins () {
-		int spawnPos = rand.nextInt(3)*150;
-		for (int i = 1; i < ran.nextInt(6)+10; i++) {
-			coins.add(new Coins (spawnPos + 50, -50*i, 30, 30));
+
+	void addCoins() {
+		Coins.setRandomColor ();
+		int spawnPos = rand.nextInt(3) * 150;
+		for (int i = 1; i < ran.nextInt(6) + 10; i++) {
+			coins.add(new Coins(spawnPos + 50, -50 * i, 30, 30));
 		}
-		
+
 	}
 
 	void update() {
@@ -59,11 +75,11 @@ public class ObjectManager implements ActionListener  {
 		}
 		for (int i = 0; i < coins.size(); i++) {
 			coins.get(i).update();
-			if (coins.get(i).y>TempleRun.HEIGHT) {
+			if (coins.get(i).y > TempleRun.HEIGHT) {
 				coins.get(i).isActive = false;
 			}
 		}
-		purgeObjects ();
+		purgeObjects();
 		checkCollisions();
 	}
 
@@ -74,11 +90,11 @@ public class ObjectManager implements ActionListener  {
 		for (int i = 0; i < shortObstacles.size(); i++) {
 			shortObstacles.get(i).draw(g);
 		}
-		runner.draw(g);
+
 		for (int i = 0; i < longObstacles.size(); i++) {
 			longObstacles.get(i).draw(g);
 		}
-		
+		runner.draw(g);
 
 	}
 
@@ -105,13 +121,13 @@ public class ObjectManager implements ActionListener  {
 
 	void checkCollisions() {
 		for (int i = 0; i < shortObstacles.size(); i++) {
-			if (runner.collisionBox.intersects(shortObstacles.get(i).collisionBox)&& !runner.inAir()) {
+			if (runner.collisionBox.intersects(shortObstacles.get(i).collisionBox) && !runner.inAir()) {
 				shortObstacles.get(i).isActive = false;
 				runner.isActive = false;
 			}
 		}
 		for (int i = 0; i < longObstacles.size(); i++) {
-			if (runner.collisionBox.intersects(longObstacles.get(i).collisionBox)) {
+			if (runner.collisionBox.intersects(longObstacles.get(i).collisionBox) && !runner.inAir()) {
 				longObstacles.get(i).isActive = false;
 				runner.isActive = false;
 			}
@@ -119,7 +135,8 @@ public class ObjectManager implements ActionListener  {
 		for (int i = 0; i < coins.size(); i++) {
 			if (runner.collisionBox.intersects(coins.get(i).collisionBox)) {
 				coins.get(i).isActive = false;
-				GamePanel.score++;
+				GamePanel.score+= coins.get(i).pointValue;
+				//clip.play();
 			}
 		}
 	}
@@ -127,16 +144,14 @@ public class ObjectManager implements ActionListener  {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		if (e.getSource()==GamePanel.shortSpawn) {
+		if (e.getSource() == GamePanel.shortSpawn) {
 			addShort();
-		}else if (e.getSource()==GamePanel.longSpawn) {
+		} else if (e.getSource() == GamePanel.longSpawn) {
 			addLong();
-		}else if (e.getSource()==GamePanel.coinSpawn) {
+		} else if (e.getSource() == GamePanel.coinSpawn) {
 			addCoins();
 		}
 	}
-
-	
 
 //	@Override
 //	public void actionPerformed(ActionEvent arg0) {

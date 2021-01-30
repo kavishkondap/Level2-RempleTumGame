@@ -9,7 +9,7 @@ int velocity;
 int acceleration;
 boolean right;
 boolean left;
-public static final int MAX = 13;
+public static final int MAX = 16;
 long last_time = System.nanoTime();
 long time = System.nanoTime();
 double delta_time = (int) ((time - last_time) / 1000000);
@@ -21,7 +21,7 @@ public static boolean gotImage = false;
 		this.velocity = -MAX;
 		this.acceleration = -1;
 		if (needImage) {
-		    loadImage ("templeRunner.png");
+		    loadImage ("temple_run_dude_no_back.png");
 		}
 		// TODO Auto-generated constructor stub
 	}
@@ -50,17 +50,19 @@ public static boolean gotImage = false;
 //		g.fillRect((int) x, (int) y, width, height);
 		if (gotImage) {
 			g.drawImage(image, (int) x, (int) y, width, height, null);
+			g.setColor(Color.BLUE);
+			//g.drawRect((int) x,(int) y, width, height);
 		} else {
 			g.setColor(Color.BLUE);
 			g.fillRect((int)x, (int)y, width, height);
 		}
 	}
-	void right () {
-		x+=speed;
-	}
-	void left () {
-		x-=speed;
-	}
+//	void right () {
+//		x+=speed;
+//	}
+//	void left () {
+//		x-=speed;
+//	}
 	void move () {
 		
 		if (left) {
@@ -68,6 +70,12 @@ public static boolean gotImage = false;
 		}
 		if (right) {
 			x+=speed*delta_time;
+		}
+		if (x<0) {
+			x = TempleRun.WIDTH - width;
+		}
+		if (x+width>TempleRun.WIDTH) {
+			x = 0;
 		}
 	}
 	void loadImage(String imageFile) {
