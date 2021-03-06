@@ -1,3 +1,4 @@
+//import java.applet.AudioClip;
 import java.applet.AudioClip;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -5,15 +6,18 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+//import javafx.scene.media.AudioClip;
 //import java.awt.event.ActionEvent;
 //import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
-
+//import com.sun.media.sound.DirectAudioDevice;
 import javax.management.ListenerNotFoundException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.Control;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JApplet;
@@ -162,7 +166,7 @@ public class ObjectManager implements ActionListener {
 			if (runner.collisionBox.intersects(coins.get(i).collisionBox)) {
 				coins.get(i).isActive = false;
 				GamePanel.score += coins.get(i).pointValue;
-				playSound ();
+				playCoinSound ();
 				//clip.stop();
 //				try {
 //					clip.open(audioInputStream);
@@ -180,11 +184,22 @@ public class ObjectManager implements ActionListener {
 		}
 	}
 
-	public static void playSound() {
+	public static void playCoinSound() {
 		try {
-			AudioClip sound = JApplet.newAudioClip(ObjectManager.class.getResource("coinSound.wav"));
+			AudioClip sound = JApplet.newAudioClip(ObjectManager.class.getResource("coinSound2.wav"));
+			
 			sound.play();
+//			Clip c = sound;
+//			c
 			//Thread.sleep(3400);
+			//Clip clip = AudioSystem.getClip();
+//			System.out.println(clip.getClass());
+//	        clip.open(AudioSystem.getAudioInputStream(new File("src/coinSound.wav")));
+//	        Control gainControl = clip.getControl(FloatControl.Type.BALANCE);        
+//	        ((FloatControl) gainControl).setValue((float) 0.01);
+
+	        //clip.start();
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -193,6 +208,7 @@ public class ObjectManager implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		
 		if (e.getSource() == GamePanel.shortSpawn) {
 			addShort();
 		} else if (e.getSource() == GamePanel.longSpawn) {

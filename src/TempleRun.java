@@ -14,9 +14,7 @@ GamePanel panel;
 	public static void main(String[] args) {
 		TempleRun runner = new TempleRun();
 		runner.setup();
-		if (!frame.isActive()) {
-			GamePanel.HIGHSCOREHOLDER=GamePanel.highScore;
-		}
+		GamePanel.playThemeSong ();
 	}
 
 	public void setup() {

@@ -24,17 +24,17 @@ public class Coins extends GameObject {
 		}
 		if (random == 0) {
 			currentImage = redImage;
-			System.out.println("RED");
+			//System.out.println("RED");
 			pointValue = 2;
 			random = rand.nextInt(3);
 		} else if (random == 1) {
 			currentImage = blueImage;
-			System.out.println("BLUE");
+			//System.out.println("BLUE");
 			pointValue = 3;
 			random = rand.nextInt(3);
 		} else if (random == 2) {
 			currentImage = yellowImage;
-			System.out.println("YELLOW");
+			//System.out.println("YELLOW");
 			pointValue = 1;
 			random = rand.nextInt(3);
 		} else {
@@ -68,7 +68,7 @@ public class Coins extends GameObject {
 
 	static void setRandomColor() {
 		random++;
-		random = random%3;
+		random = random % 3;
 	}
 
 	void loadImages() {
@@ -76,7 +76,7 @@ public class Coins extends GameObject {
 			try {
 				redImage = ImageIO.read(this.getClass().getResourceAsStream("red.png"));
 				blueImage = ImageIO.read(this.getClass().getResourceAsStream("blue.png"));
-				yellowImage = ImageIO.read(this.getClass().getResourceAsStream("yellow.png"));
+				yellowImage = ImageIO.read(this.getClass().getResourceAsStream("yCoin.png"));
 				gotImage = true;
 			} catch (Exception e) {
 
